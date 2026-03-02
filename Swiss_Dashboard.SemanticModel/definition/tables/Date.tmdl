@@ -1,0 +1,224 @@
+/// Date dimension table for time intelligence analysis. Contains calendar attributes from Dec 2025 to Dec 2027.
+table Date
+	lineageTag: 794f8615-0ede-4e3a-9fa9-e8f5af096ee3
+	dataCategory: Time
+
+	/// Surrogate key in YYYYMMDD format
+	column Date_Key
+		dataType: int64
+		formatString: 0
+		lineageTag: 2eb3967d-58c4-45f4-9839-b6e521a8638e
+		summarizeBy: none
+		sourceColumn: Date_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Full calendar date
+	column FullDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b94f8e18-88c0-4287-973b-1d5dfb302ca1
+		summarizeBy: none
+		sourceColumn: FullDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Calendar year number
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 0e7d57ac-ff16-4774-9abf-91ad97f6d090
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Calendar year label (e.g. CY 2026)
+	column Calendar_Year
+		dataType: string
+		lineageTag: 94816693-7121-4f3e-9e61-8e0827eda990
+		summarizeBy: none
+		sourceColumn: Calendar_Year
+		sortByColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Quarter number (1-4)
+	column Quarter_Number
+		dataType: int64
+		formatString: 0
+		lineageTag: 1fd1b0b2-0e96-451d-af11-ad699164766e
+		summarizeBy: none
+		sourceColumn: Quarter_Number
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Quarter label (e.g. Q1 2026)
+	column Quarter_Name
+		dataType: string
+		lineageTag: 83b71a72-f2f2-496d-bab9-97e473a16ef0
+		summarizeBy: none
+		sourceColumn: Quarter_Name
+		sortByColumn: Quarter_Number
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Month number (1-12)
+	column Month_Number
+		dataType: int64
+		formatString: 0
+		lineageTag: 50db5248-9c98-431a-b529-ecbce72efd5b
+		summarizeBy: none
+		sourceColumn: Month_Number
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Month name (January through December)
+	column Month_Name
+		dataType: string
+		lineageTag: 1ced5ccc-0f3a-48e2-a4a5-1bd3080be424
+		summarizeBy: none
+		sourceColumn: Month_Name
+		sortByColumn: Month_Number
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Year-month key in YYYY-MM format
+	column Year_Month_Key
+		dataType: string
+		lineageTag: 5360ea5a-a488-493a-9aef-32bb34f6790b
+		summarizeBy: none
+		sourceColumn: Year_Month_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Day of the month (1-31)
+	column Day_Of_Month
+		dataType: int64
+		formatString: 0
+		lineageTag: a45497b3-3375-416b-ab9f-ea24e2917d1b
+		summarizeBy: none
+		sourceColumn: Day_Of_Month
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Day of week number (1=Sunday, 7=Saturday)
+	column Day_Of_Week_Number
+		dataType: int64
+		formatString: 0
+		lineageTag: 7cbcd93e-59b6-457b-9ed2-74282316f335
+		summarizeBy: none
+		sourceColumn: Day_Of_Week_Number
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Day of week name (Sunday through Saturday)
+	column Day_Name
+		dataType: string
+		lineageTag: 8769eae4-778c-4ac4-a1b7-26582660ca0c
+		summarizeBy: none
+		sourceColumn: Day_Name
+		sortByColumn: Day_Of_Week_Number
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Yes/No flag indicating weekend days
+	column Is_Weekend
+		dataType: string
+		lineageTag: fd3f5a92-7027-4b59-9641-eeff635a831d
+		summarizeBy: none
+		sourceColumn: Is_Weekend
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Date = m
+		mode: import
+		source = ```
+				// Function to generate the Date Dimension
+				let
+				    // --- Configuration ---
+				    StartDate = #date(2025, 12, 14),
+				    EndDate = #date(2027, 12, 13),
+				
+				    // --- Core Date Generation ---
+				    DateList = List.Dates(
+				        StartDate,
+				        Duration.Days(EndDate - StartDate) + 1,
+				        #duration(1, 0, 0, 0) // Step of 1 day
+				    ),
+				    
+				    // Convert the list of dates into a table
+				    DateTable = Table.FromList(DateList, Splitter.SplitByNothing(), {"FullDate"}, null, ExtraValues.Error),
+				    
+				    // Set the initial data type
+				    ChangedType = Table.TransformColumnTypes(DateTable, {{"FullDate", type date}}),
+				    
+				    // --- Add Dimension Columns ---
+				
+				    // 1. Date Key (YYYYMMDD format) - Primary Key/Foreign Key
+				    AddDateKey = Table.AddColumn(
+				        ChangedType, 
+				        "Date_Key", 
+				        each Date.Year([FullDate]) * 10000 + Date.Month([FullDate]) * 100 + Date.Day([FullDate]), 
+				        Int64.Type
+				    ),
+				
+				    // 2. Year Components
+				    AddYear = Table.AddColumn(AddDateKey, "Year", each Date.Year([FullDate]), Int64.Type),
+				    AddCalendarYear = Table.AddColumn(AddYear, "Calendar_Year", each "CY " & Text.From(Date.Year([FullDate])), type text),
+				
+				    // 3. Month Components
+				    AddMonthNum = Table.AddColumn(AddCalendarYear, "Month_Number", each Date.Month([FullDate]), Int64.Type),
+				    AddMonthName = Table.AddColumn(AddMonthNum, "Month_Name", each Date.ToText([FullDate], "MMMM"), type text),
+				    AddYearMonthKey = Table.AddColumn(AddMonthName, "Year_Month_Key", each Text.From(Date.Year([FullDate])) & "-" & Text.PadStart(Text.From(Date.Month([FullDate])), 2, "0"), type text),
+				
+				    // 4. Quarter Components
+				    AddQuarter = Table.AddColumn(AddYearMonthKey, "Quarter_Number", each Date.QuarterOfYear([FullDate]), Int64.Type),
+				    AddQuarterName = Table.AddColumn(AddQuarter, "Quarter_Name", each "Q" & Text.From(Date.QuarterOfYear([FullDate])) & " " & Text.From(Date.Year([FullDate])), type text),
+				
+				    // 5. Day Components
+				    AddDayOfMonth = Table.AddColumn(AddQuarterName, "Day_Of_Month", each Date.Day([FullDate]), Int64.Type),
+				    AddDayOfWeek = Table.AddColumn(AddDayOfMonth, "Day_Of_Week_Number", each Date.DayOfWeek([FullDate], Day.Sunday) + 1, Int64.Type), // 1=Sunday, 7=Saturday
+				    AddDayName = Table.AddColumn(AddDayOfWeek, "Day_Name", each Date.DayOfWeekName([FullDate]), type text),
+				
+				    // 6. Weekend Flag
+				    AddIsWeekend = Table.AddColumn(
+				        AddDayName, 
+				        "Is_Weekend", 
+				        each if Date.DayOfWeek([FullDate], Day.Sunday) = 0 or Date.DayOfWeek([FullDate], Day.Sunday) = 6 
+				        then "Yes" 
+				        else "No", 
+				        type text
+				    ),
+				    
+				    // --- Final Step: Reorder and Select Columns ---
+				    FinalTable = Table.SelectColumns(
+				        AddIsWeekend, 
+				        {
+				            "Date_Key", 
+				            "FullDate",
+				            "Year", 
+				            "Calendar_Year",
+				            "Quarter_Number",
+				            "Quarter_Name",
+				            "Month_Number", 
+				            "Month_Name", 
+				            "Year_Month_Key",
+				            "Day_Of_Month",
+				            "Day_Of_Week_Number",
+				            "Day_Name",
+				            "Is_Weekend"
+				        }
+				    )
+				in
+				    FinalTable
+				```
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
