@@ -1,0 +1,72 @@
+/// Geographic location dimension with habitat, region, and environmental attributes for Swiss locations
+table Location
+	lineageTag: b2c3d4e5-1111-2222-3333-444455556667
+
+	/// Primary key for the Location dimension
+	column Location_Key
+		dataType: int64
+		isKey
+		formatString: 0
+		lineageTag: b2c3d4e5-1111-2222-3333-444455556611
+		summarizeBy: none
+		sourceColumn: Location_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Name of the observation location
+	column Location_Name
+		dataType: string
+		lineageTag: b2c3d4e5-1111-2222-3333-444455556612
+		summarizeBy: none
+		sourceColumn: Location_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Type of habitat (e.g. Alpine Meadow, Mixed Forest)
+	column Habitat_Type
+		dataType: string
+		lineageTag: b2c3d4e5-1111-2222-3333-444455556613
+		summarizeBy: none
+		sourceColumn: Habitat_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Geographic region of the location
+	column Region
+		dataType: string
+		lineageTag: b2c3d4e5-1111-2222-3333-444455556614
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Water availability at the location
+	column Water_Access
+		dataType: string
+		lineageTag: b2c3d4e5-1111-2222-3333-444455556615
+		summarizeBy: none
+		sourceColumn: Water_Access
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Density of vegetation at the location
+	column Vegetation_Density
+		dataType: string
+		lineageTag: b2c3d4e5-1111-2222-3333-444455556616
+		summarizeBy: none
+		sourceColumn: Vegetation_Density
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Location = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\domin\Documents\Power BI Modelling MCP Server\Third Project\SwissAnimals\Location.csv"),[Delimiter=",", Columns=6, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Location_Key", Int64.Type}, {"Location_Name", type text}, {"Habitat_Type", type text}, {"Region", type text}, {"Water_Access", type text}, {"Vegetation_Density", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
