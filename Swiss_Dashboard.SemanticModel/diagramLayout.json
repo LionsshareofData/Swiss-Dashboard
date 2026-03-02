@@ -1,0 +1,68 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "name": "Alle Tabellen",
+      "nodes": [
+        {
+          "nodeIndex": "Fact",
+          "location": {
+            "x": 357,
+            "y": 392.5
+          },
+          "size": {
+            "height": 248,
+            "width": 234
+          }
+        },
+        {
+          "nodeIndex": "Date",
+          "location": {
+            "x": 627,
+            "y": 13.5
+          },
+          "size": {
+            "height": 300,
+            "width": 234
+          }
+        },
+        {
+          "nodeIndex": "Activity",
+          "location": {
+            "x": 696,
+            "y": 426
+          },
+          "size": {
+            "height": 176,
+            "width": 234
+          }
+        },
+        {
+          "nodeIndex": "Animals",
+          "location": {
+            "x": 6,
+            "y": 74
+          },
+          "size": {
+            "height": 272,
+            "width": 234
+          }
+        },
+        {
+          "nodeIndex": "Location",
+          "location": {
+            "x": 6,
+            "y": 400
+          },
+          "size": {
+            "height": 200,
+            "width": 234
+          }
+        }
+      ],
+      "zoomValue": 100
+    }
+  ],
+  "selectedDiagram": "Alle Tabellen"
+}
