@@ -3,66 +3,98 @@
   "diagrams": [
     {
       "ordinal": 0,
-      "name": "Alle Tabellen",
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
       "nodes": [
         {
-          "nodeIndex": "Fact",
           "location": {
-            "x": 357,
-            "y": 392.5
+            "x": 1826.3366197874439,
+            "y": 458.89884917162203
           },
-          "size": {
-            "height": 248,
-            "width": 234
-          }
-        },
-        {
-          "nodeIndex": "Date",
-          "location": {
-            "x": 627,
-            "y": 13.5
-          },
+          "nodeIndex": "__MeasureTable",
+          "nodeLineageTag": "9e5f906e-f245-449f-956d-f3834163ab64",
           "size": {
             "height": 300,
             "width": 234
-          }
+          },
+          "zIndex": 0
         },
         {
-          "nodeIndex": "Activity",
           "location": {
-            "x": 696,
-            "y": 426
+            "x": 562.90933657745768,
+            "y": -18.803870062950637
           },
+          "nodeIndex": "Activity",
+          "nodeLineageTag": "a146fd19-4317-4879-90be-d1778529d32c",
           "size": {
             "height": 176,
             "width": 234
-          }
+          },
+          "zIndex": 0
         },
         {
-          "nodeIndex": "Animals",
           "location": {
-            "x": 6,
-            "y": 74
+            "x": 50,
+            "y": -50
           },
+          "nodeIndex": "Animals",
+          "nodeLineageTag": "b5b32dfe-db4c-4dea-87bc-e2a32a3ee52f",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50.029316281090132,
+            "y": 527.29769834324406
+          },
+          "nodeIndex": "Date",
+          "nodeLineageTag": "794f8615-0ede-4e3a-9fa9-e8f5af096ee3",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 618.33661978744374,
+            "y": 477.11388410748646
+          },
+          "nodeIndex": "Location",
+          "nodeLineageTag": "b2c3d4e5-1111-2222-3333-444455556667",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 334.17084671875807,
+            "y": 207.36768558743341
+          },
+          "nodeIndex": "FoodHunt",
+          "nodeLineageTag": "5cb244cd-af7b-4478-ae8b-dc129f02752c",
           "size": {
             "height": 272,
             "width": 234
-          }
-        },
-        {
-          "nodeIndex": "Location",
-          "location": {
-            "x": 6,
-            "y": 400
           },
-          "size": {
-            "height": 200,
-            "width": 234
-          }
+          "zIndex": 0
         }
       ],
-      "zoomValue": 100
+      "name": "Alle Tabellen",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
     }
   ],
-  "selectedDiagram": "Alle Tabellen"
+  "selectedDiagram": "Alle Tabellen",
+  "defaultDiagram": "Alle Tabellen"
 }

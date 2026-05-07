@@ -3,18 +3,18 @@ model Model
 	culture: de-DE
 	defaultPowerBIDataSourceVersion: powerBI_V3
 	discourageImplicitMeasures
-	sourceQueryCulture: de-CH
+	sourceQueryCulture: de-DE
 	dataAccessOptions
 		legacyRedirects
 		returnErrorValuesAsNull
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
-annotation PBI_QueryOrder = ["Fact","Date","Activity","Animals","__MeasureTable","Location"]
+annotation PBI_QueryOrder = ["foodhunt","date","activity","animals","__MeasureTable","location"]
 
 annotation PBI_ProTooling = ["DevMode","MCP-PBIModeling","TMDLView_Desktop"]
 
-ref table Fact
+ref table FoodHunt
 ref table Date
 ref table Activity
 ref table Animals

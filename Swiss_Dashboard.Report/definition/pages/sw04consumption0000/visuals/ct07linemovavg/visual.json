@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "ct07linemovavg",
   "position": {
     "x": 244.68,
@@ -42,11 +42,11 @@
                       "Entity": "__MeasureTable"
                     }
                   },
-                  "Property": "30-Day Moving Avg"
+                  "Property": "30-Day Moving Avg Consumption (kg)"
                 }
               },
-              "queryRef": "__MeasureTable.30-Day Moving Avg",
-              "nativeQueryRef": "30-Day Moving Avg"
+              "queryRef": "__MeasureTable.30-Day Moving Avg Consumption (kg)",
+              "nativeQueryRef": "30-Day Moving Avg Consumption (kg)"
             }
           ]
         }
@@ -57,6 +57,20 @@
         {
           "properties": {
             "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableBackground": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -206,5 +220,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "1f1db0af86de0d994c06",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Date"
+              }
+            },
+            "Property": "FullDate"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

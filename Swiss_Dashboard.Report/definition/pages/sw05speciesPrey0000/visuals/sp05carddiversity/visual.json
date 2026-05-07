@@ -23,11 +23,11 @@
                       "Entity": "__MeasureTable"
                     }
                   },
-                  "Property": "Prey Diversity Index"
+                  "Property": "Prey Diversity Index (Shannon)"
                 }
               },
-              "queryRef": "__MeasureTable.Prey Diversity Index",
-              "nativeQueryRef": "Prey Diversity Index"
+              "queryRef": "__MeasureTable.Prey Diversity Index (Shannon)",
+              "nativeQueryRef": "Prey Diversity Index (Shannon)"
             }
           ]
         }

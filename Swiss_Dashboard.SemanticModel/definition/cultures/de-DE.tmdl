@@ -8,7 +8,7 @@ cultureInfo de-DE
 			    "animals.species_name": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Animals",
+			          "ConceptualEntity": "animals",
 			          "ConceptualProperty": "Species_Name"
 			        }
 			      },

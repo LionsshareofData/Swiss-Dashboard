@@ -5,6 +5,7 @@ table Activity
 	/// Primary key for the Activity dimension
 	column Activity_Type_Key
 		dataType: int64
+		isKey
 		formatString: 0
 		lineageTag: ad7a831e-3b42-421f-84b5-19ef349e6d26
 		summarizeBy: none
@@ -39,7 +40,7 @@ table Activity
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Activity = m
+	partition activity = m
 		mode: import
 		source =
 				let

@@ -23,11 +23,11 @@
                       "Entity": "__MeasureTable"
                     }
                   },
-                  "Property": "Total Consumption"
+                  "Property": "Total Consumption (kg)"
                 }
               },
-              "queryRef": "__MeasureTable.Total Consumption",
-              "nativeQueryRef": "Total Consumption"
+              "queryRef": "__MeasureTable.Total Consumption (kg)",
+              "nativeQueryRef": "Total Consumption (kg)"
             }
           ]
         }

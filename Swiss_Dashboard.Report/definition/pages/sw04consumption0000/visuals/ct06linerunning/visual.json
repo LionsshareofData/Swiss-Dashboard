@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "ct06linerunning",
   "position": {
     "x": 244.68,
@@ -42,11 +42,11 @@
                       "Entity": "__MeasureTable"
                     }
                   },
-                  "Property": "Running Total Consumption"
+                  "Property": "Running Total Consumption (kg)"
                 }
               },
-              "queryRef": "__MeasureTable.Running Total Consumption",
-              "nativeQueryRef": "Running Total Consumption"
+              "queryRef": "__MeasureTable.Running Total Consumption (kg)",
+              "nativeQueryRef": "Running Total Consumption (kg)"
             }
           ]
         }
@@ -57,6 +57,20 @@
         {
           "properties": {
             "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableBackground": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -206,5 +220,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "9441c8d0710b9401e31c",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Date"
+              }
+            },
+            "Property": "FullDate"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

@@ -1,5 +1,5 @@
 /// Fact table recording wildlife activities including feeding, foraging, and prey consumption events in Switzerland
-table Fact
+table FoodHunt
 	lineageTag: 5cb244cd-af7b-4478-ae8b-dc129f02752c
 
 	/// Surrogate key linking to the Date dimension
@@ -86,7 +86,7 @@ table Fact
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Fact = m
+	partition foodhunt = m
 		mode: import
 		source =
 				let

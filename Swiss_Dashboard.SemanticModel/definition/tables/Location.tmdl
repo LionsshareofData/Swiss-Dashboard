@@ -58,7 +58,7 @@ table Location
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Location = m
+	partition location = m
 		mode: import
 		source =
 				let

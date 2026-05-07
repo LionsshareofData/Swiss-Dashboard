@@ -41,7 +41,7 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Fact"
+                          "Entity": "FoodHunt"
                         }
                       },
                       "Property": "Quantity_Consumed_Kg"
@@ -50,7 +50,7 @@
                   "Function": 0
                 }
               },
-              "queryRef": "Sum(Fact.Quantity_Consumed_Kg)",
+              "queryRef": "Sum(FoodHunt.Quantity_Consumed_Kg)",
               "nativeQueryRef": "Sum of Quantity_Consumed_Kg"
             }
           ]
@@ -65,7 +65,7 @@
                   "Column": {
                     "Expression": {
                       "SourceRef": {
-                        "Entity": "Fact"
+                        "Entity": "FoodHunt"
                       }
                     },
                     "Property": "Quantity_Consumed_Kg"
@@ -100,7 +100,14 @@
             "enableBackground": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
+                }
+              }
+            },
+            "labelPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'OutsideEnd'"
                 }
               }
             }

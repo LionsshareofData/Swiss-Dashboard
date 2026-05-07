@@ -5,6 +5,7 @@ table Animals
 	/// Primary key for the Animals dimension
 	column Animal_Key
 		dataType: int64
+		isKey
 		formatString: 0
 		lineageTag: a87ac7bc-73f3-4e3f-a24e-032c88dc6644
 		summarizeBy: none
@@ -86,7 +87,7 @@ table Animals
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Animals = m
+	partition animals = m
 		mode: import
 		source =
 				let

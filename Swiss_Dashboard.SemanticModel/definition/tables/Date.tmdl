@@ -6,6 +6,7 @@ table Date
 	/// Surrogate key in YYYYMMDD format
 	column Date_Key
 		dataType: int64
+		isKey
 		formatString: 0
 		lineageTag: 2eb3967d-58c4-45f4-9839-b6e521a8638e
 		summarizeBy: none
@@ -61,7 +62,7 @@ table Date
 		lineageTag: 83b71a72-f2f2-496d-bab9-97e473a16ef0
 		summarizeBy: none
 		sourceColumn: Quarter_Name
-		sortByColumn: Quarter_Number
+		sortByColumn: Year_Quarter_Sort
 
 		annotation SummarizationSetBy = Automatic
 
@@ -135,7 +136,18 @@ table Date
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Date = m
+	/// Composite sort key for Quarter_Name (Year * 10 + Quarter)
+	column Year_Quarter_Sort
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 83b71a72-aaaa-bbbb-cccc-ddddeeee0001
+		summarizeBy: none
+		sourceColumn: Year_Quarter_Sort
+
+		annotation SummarizationSetBy = Automatic
+
+	partition date = m
 		mode: import
 		source = ```
 				// Function to generate the Date Dimension
@@ -179,9 +191,10 @@ table Date
 				    // 4. Quarter Components
 				    AddQuarter = Table.AddColumn(AddYearMonthKey, "Quarter_Number", each Date.QuarterOfYear([FullDate]), Int64.Type),
 				    AddQuarterName = Table.AddColumn(AddQuarter, "Quarter_Name", each "Q" & Text.From(Date.QuarterOfYear([FullDate])) & " " & Text.From(Date.Year([FullDate])), type text),
+				    AddYearQuarterSort = Table.AddColumn(AddQuarterName, "Year_Quarter_Sort", each Date.Year([FullDate]) * 10 + Date.QuarterOfYear([FullDate]), Int64.Type),
 				
 				    // 5. Day Components
-				    AddDayOfMonth = Table.AddColumn(AddQuarterName, "Day_Of_Month", each Date.Day([FullDate]), Int64.Type),
+				    AddDayOfMonth = Table.AddColumn(AddYearQuarterSort, "Day_Of_Month", each Date.Day([FullDate]), Int64.Type),
 				    AddDayOfWeek = Table.AddColumn(AddDayOfMonth, "Day_Of_Week_Number", each Date.DayOfWeek([FullDate], Day.Sunday) + 1, Int64.Type), // 1=Sunday, 7=Saturday
 				    AddDayName = Table.AddColumn(AddDayOfWeek, "Day_Name", each Date.DayOfWeekName([FullDate]), type text),
 				
@@ -205,6 +218,7 @@ table Date
 				            "Calendar_Year",
 				            "Quarter_Number",
 				            "Quarter_Name",
+				            "Year_Quarter_Sort",
 				            "Month_Number", 
 				            "Month_Name", 
 				            "Year_Month_Key",

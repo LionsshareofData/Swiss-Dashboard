@@ -23,11 +23,11 @@
                       "Entity": "__MeasureTable"
                     }
                   },
-                  "Property": "Weighted Success Rate"
+                  "Property": "Weighted Success Rate (by Prey)"
                 }
               },
-              "queryRef": "__MeasureTable.Weighted Success Rate",
-              "nativeQueryRef": "Weighted Success Rate"
+              "queryRef": "__MeasureTable.Weighted Success Rate (by Prey)",
+              "nativeQueryRef": "Weighted Success Rate (by Prey)"
             }
           ]
         }

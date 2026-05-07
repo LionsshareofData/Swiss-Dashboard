@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "vis02regionpie",
   "position": {
     "x": 781.7,
@@ -41,7 +41,7 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Fact"
+                          "Entity": "FoodHunt"
                         }
                       },
                       "Property": "Quantity_Consumed_Kg"
@@ -50,7 +50,7 @@
                   "Function": 0
                 }
               },
-              "queryRef": "Sum(Fact.Quantity_Consumed_Kg)",
+              "queryRef": "Sum(FoodHunt.Quantity_Consumed_Kg)",
               "nativeQueryRef": "Sum of Quantity_Consumed_Kg"
             }
           ]
