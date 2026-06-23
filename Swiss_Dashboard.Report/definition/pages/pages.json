@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
+  "pageOrder": [
+    "sw01overview00000000",
+    "sw02location00000000",
+    "sw03performance0000",
+    "sw04consumption0000",
+    "sw05speciesPrey0000",
+    "sw06habitatPareto00"
+  ],
+  "activePageName": "sw02location00000000"
+}

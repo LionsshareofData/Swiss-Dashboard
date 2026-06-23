@@ -1,0 +1,103 @@
+/// Animal species dimension with biological attributes, conservation status, and physical characteristics for Swiss wildlife
+table Animals
+	lineageTag: b5b32dfe-db4c-4dea-87bc-e2a32a3ee52f
+
+	/// Primary key for the Animals dimension
+	column Animal_Key
+		dataType: int64
+		isKey
+		formatString: 0
+		lineageTag: a87ac7bc-73f3-4e3f-a24e-032c88dc6644
+		summarizeBy: none
+		sourceColumn: Animal_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Common name of the animal species
+	column Species_Name
+		dataType: string
+		lineageTag: 9ba5c738-a0b6-4587-9d4a-601fae502bd2
+		summarizeBy: none
+		sourceColumn: Species_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Scientific/Latin name of the species
+	column Biological_Name
+		dataType: string
+		lineageTag: ce95b4ea-caa3-4968-ba3e-5e56e1b32f7c
+		summarizeBy: none
+		sourceColumn: Biological_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Dietary classification (e.g. carnivore, herbivore)
+	column Dietary_Type
+		dataType: string
+		lineageTag: 7dc5794d-a8c6-414d-8a72-f4d793fe86c2
+		summarizeBy: none
+		sourceColumn: Dietary_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	/// IUCN conservation status of the species
+	column Conservation_Status
+		dataType: string
+		lineageTag: 89649a4a-073a-4c6e-b832-ffbbfaff1fd2
+		summarizeBy: none
+		sourceColumn: Conservation_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Average body weight in kilograms
+	column Avg_Weight_kg
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 4dd50825-2f10-4ba6-ab95-976bbb92ac3d
+		summarizeBy: none
+		sourceColumn: Avg_Weight_kg
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Social organization type (e.g. herd, solitary)
+	column Social_Structure
+		dataType: string
+		lineageTag: 2793171d-0fe7-430a-8f95-a0601da997f2
+		summarizeBy: none
+		sourceColumn: Social_Structure
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Main threat to the species survival
+	column Primary_Threat
+		dataType: string
+		lineageTag: 76a94fc8-0351-4a87-a8a8-b67d28ebd13e
+		summarizeBy: none
+		sourceColumn: Primary_Threat
+
+		annotation SummarizationSetBy = Automatic
+
+	/// URL to an image of the animal species
+	column Picture
+		dataType: string
+		lineageTag: f35cf872-f3c3-4b7e-b9a0-6e64b073087b
+		dataCategory: ImageUrl
+		summarizeBy: none
+		sourceColumn: Picture
+
+		annotation SummarizationSetBy = Automatic
+
+	partition animals = m
+		mode: import
+		source =
+				let
+				    Quelle = Csv.Document(File.Contents("C:\Users\domin\Documents\Power BI Modelling MCP Server\Third Project\SwissAnimals\Animals.csv"),[Delimiter=";", Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Höher gestufte Header" = Table.PromoteHeaders(Quelle, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"Animal_Key", Int64.Type}, {"Species_Name", type text}, {"Biological_Name", type text}, {"Dietary_Type", type text}, {"Conservation_Status", type text}, {"Avg_Weight_kg", type number}, {"Social_Structure", type text}, {"Primary_Threat", type text}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

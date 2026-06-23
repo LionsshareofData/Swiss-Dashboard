@@ -1,0 +1,11 @@
+Location_Key,Location_Name,Habitat_Type,Region,Water_Access,Vegetation_Density
+1,Graubuenden Alps,Alpine Meadow,Eastern Alps,River,Dense
+2,Bernese Oberland,Subalpine Forest,Central Alps,Lake,Moderate
+3,Swiss National Park,Protected Alpine,Eastern Alps,Stream,Dense
+4,Jura Mountains,Mixed Forest,Jura Region,River,Dense
+5,Valais Valley,Valley Floor,Western Alps,River,Moderate
+6,Ticino Forest,Deciduous Forest,Southern Alps,Stream,Dense
+7,Engadin Valley,Alpine Valley,Eastern Alps,Lake,Sparse
+8,Lake Geneva Shore,Lakeside Meadow,Western Plateau,Lake,Moderate
+9,Aletsch Glacier Area,Glacial Moraine,Central Alps,Glacial,Sparse
+10,Pilatus Mountain,Montane Forest,Central Alps,Stream,Moderate

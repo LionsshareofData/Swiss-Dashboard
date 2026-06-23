@@ -1,0 +1,102 @@
+/// Fact table recording wildlife activities including feeding, foraging, and prey consumption events in Switzerland
+table FoodHunt
+	lineageTag: 5cb244cd-af7b-4478-ae8b-dc129f02752c
+
+	/// Surrogate key linking to the Date dimension
+	column Date_Key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e27cb245-d66b-4bdc-9d03-d79befa7f999
+		summarizeBy: none
+		sourceColumn: Date_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Surrogate key linking to the Animals dimension
+	column Animal_Key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 3ede04f2-ccc7-4212-91f3-f4aa65ee2aef
+		summarizeBy: none
+		sourceColumn: Animal_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Surrogate key linking to the Activity dimension
+	column Activity_Type_Key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 04e1c21d-fc08-4355-99a5-4ebcf3cba9de
+		summarizeBy: none
+		sourceColumn: Activity_Type_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Amount consumed in kilograms per activity
+	column Quantity_Consumed_Kg
+		dataType: double
+		lineageTag: eef13099-463d-40c6-812e-66cb12c00d6f
+		summarizeBy: none
+		sourceColumn: Quantity_Consumed_Kg
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Number of prey units per activity
+	column Quantity_Prey_Units
+		dataType: int64
+		formatString: 0
+		lineageTag: b2ec767d-3f72-477f-bf80-bf5ec26b7c63
+		summarizeBy: none
+		sourceColumn: Quantity_Prey_Units
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Binary flag: 1 = successful activity, 0 = unsuccessful
+	column Success_Flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 150dd87f-4475-48c6-a007-4d26ebb08b1d
+		summarizeBy: none
+		sourceColumn: Success_Flag
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Name of the prey species targeted during the activity
+	column Prey_Species_Hunted
+		dataType: string
+		lineageTag: fdfb7aa3-fe63-4ea8-8cbe-4153d6da3dc2
+		summarizeBy: none
+		sourceColumn: Prey_Species_Hunted
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Surrogate key linking to the Location dimension
+	column Location_Key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c3d4e5f6-2222-3333-4444-555566667778
+		summarizeBy: none
+		sourceColumn: Location_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	partition foodhunt = m
+		mode: import
+		source =
+				let
+				    Quelle = Csv.Document(File.Contents("C:\Users\domin\Documents\Power BI Modelling MCP Server\Third Project\SwissAnimals\Fact.csv"),[Delimiter=";", Columns=8, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Höher gestufte Header" = Table.PromoteHeaders(Quelle, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"Date_Key", Int64.Type}, {"Animal_Key", Int64.Type}, {"Activity_Type_Key", Int64.Type}, {"Quantity_Consumed_Kg", type number}, {"Quantity_Prey_Units", Int64.Type}, {"Success_Flag", Int64.Type}, {"Prey_Species_Hunted", type text}, {"Location_Key", Int64.Type}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

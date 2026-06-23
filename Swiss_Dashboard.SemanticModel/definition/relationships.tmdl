@@ -1,0 +1,16 @@
+relationship foodhunt_date
+	fromColumn: FoodHunt.Date_Key
+	toColumn: Date.Date_Key
+
+relationship foodhunt_activity
+	fromColumn: FoodHunt.Activity_Type_Key
+	toColumn: Activity.Activity_Type_Key
+
+relationship foodhunt_animals
+	fromColumn: FoodHunt.Animal_Key
+	toColumn: Animals.Animal_Key
+
+relationship foodhunt_location
+	fromColumn: FoodHunt.Location_Key
+	toColumn: Location.Location_Key
+

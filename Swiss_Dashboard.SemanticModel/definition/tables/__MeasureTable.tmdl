@@ -1,0 +1,396 @@
+/// Centralized measure table containing all DAX measures for the Swiss Wildlife Dashboard
+table __MeasureTable
+	lineageTag: 9e5f906e-f245-449f-956d-f3834163ab64
+
+	/// Returns the embedded image for the current animal species from the Picture column. Used for image rendering in visuals.
+	measure 'Species Image URL' = MAX(Animals[Picture])
+		displayFolder: Utility
+		lineageTag: 2d15583c-7181-49ff-85d1-6d58e828e23e
+
+	/// Total amount consumed in kilograms across all activities
+	measure 'Total Consumption (kg)' = SUM(FoodHunt[Quantity_Consumed_Kg])
+		formatString: #,##0.00
+		displayFolder: Core Totals
+		lineageTag: b1b2c3d4-0001-0001-0001-000000000001
+
+	/// Total number of prey units across all activities
+	measure 'Total Prey Units' = SUM(FoodHunt[Quantity_Prey_Units])
+		formatString: #,##0
+		displayFolder: Core Totals
+		lineageTag: b1b2c3d4-0002-0002-0002-000000000002
+
+	/// Total number of recorded activities (rows in Fact table)
+	measure 'Total Activities' = COUNTROWS(FoodHunt)
+		formatString: #,##0
+		displayFolder: Core Totals
+		lineageTag: b1b2c3d4-0003-0003-0003-000000000003
+
+	/// Count of activities where the hunt was successful (Success_Flag = 1)
+	measure 'Successful Hunts' = CALCULATE(COUNTROWS(FoodHunt), FoodHunt[Success_Flag] = 1)
+		formatString: #,##0
+		displayFolder: Core Totals
+		lineageTag: b1b2c3d4-0004-0004-0004-000000000004
+
+	/// Percentage of activities that were successful (Successful Hunts / Total Activities)
+	measure 'Success Rate %' = DIVIDE([Successful Hunts], [Total Activities], 0)
+		formatString: 0.0%
+		displayFolder: Rates & Ratios
+		lineageTag: b1b2c3d4-0005-0005-0005-000000000005
+
+	/// Average consumption in kg per activity (Total Consumption / Total Activities)
+	measure 'Avg Consumption per Activity' = DIVIDE([Total Consumption (kg)], [Total Activities], 0)
+		formatString: #,##0.00
+		displayFolder: Rates & Ratios
+		lineageTag: b1b2c3d4-0006-0006-0006-000000000006
+
+	/// Count of animal records in the filtered context
+	measure 'Distinct Animals' = COUNT(FoodHunt[Animal_Key])
+		formatString: #,##0
+		displayFolder: Core Totals
+		lineageTag: b1b2c3d4-0007-0007-0007-000000000007
+
+	/// Average body weight (kg) of animal species in the current filter context
+	measure 'Avg Animal Weight (kg)' = AVERAGE(Animals[Avg_Weight_kg])
+		formatString: #,##0.0
+		displayFolder: Rates & Ratios
+		lineageTag: b1b2c3d4-0008-0008-0008-000000000008
+
+	/// Average consumption in kg per prey unit (Total Consumption / Total Prey Units)
+	measure 'Consumption per Prey Unit' = DIVIDE([Total Consumption (kg)], [Total Prey Units], 0)
+		formatString: #,##0.00
+		displayFolder: Rates & Ratios
+		lineageTag: b1b2c3d4-0009-0009-0009-000000000009
+
+	/// Year-over-year growth in total consumption (kg), expressed as a percentage
+	measure 'YoY Consumption Growth %' =
+			VAR CurrentYearValue = [Total Consumption (kg)]
+			VAR PriorYearValue = CALCULATE([Total Consumption (kg)], SAMEPERIODLASTYEAR('Date'[FullDate]))
+			RETURN DIVIDE(CurrentYearValue - PriorYearValue, PriorYearValue, 0)
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: b1b2c3d4-0010-0010-0010-000000000010
+
+	/// Cumulative total of consumption (kg) from the earliest date up to the current date in context
+	measure 'Running Total Consumption (kg)' =
+			VAR CurrentDate = MAX('Date'[FullDate])
+			RETURN
+			    CALCULATE(
+			        [Total Consumption (kg)],
+			        'Date'[FullDate] <= CurrentDate,
+			        ALL('Date')
+			    )
+		formatString: #,##0.00
+		displayFolder: Time Intelligence
+		lineageTag: 4dde988b-e9db-4704-92e3-368b5b943262
+
+	/// Average daily consumption (kg) over the trailing 30-day window ending on the current date
+	measure '30-Day Moving Avg Consumption (kg)' =
+			VAR CurrentDate = MAX('Date'[FullDate])
+			VAR WindowStart = CurrentDate - 29
+			RETURN
+			    CALCULATE(
+			        DIVIDE(
+			            [Total Consumption (kg)],
+			            DISTINCTCOUNT('Date'[FullDate])
+			        ),
+			        FILTER(
+			            ALL('Date'),
+			            'Date'[FullDate] >= WindowStart && 'Date'[FullDate] <= CurrentDate
+			        )
+			    )
+		formatString: #,##0.00
+		displayFolder: Time Intelligence
+		lineageTag: b0857770-a6e7-4b01-a617-865c4d19764a
+
+	/// Dense rank of the current species by total consumption (kg), where rank 1 = highest consumer
+	measure 'Species Consumption Rank' =
+			IF(
+			    HASONEVALUE(Animals[Species_Name]),
+			    RANKX(
+			        ALL(Animals[Species_Name]),
+			        [Total Consumption (kg)],
+			        ,
+			        DESC,
+			        Dense
+			    )
+			)
+		formatString: 0
+		displayFolder: Ranking & Distribution
+		lineageTag: f30cd9ca-4f8c-4e2e-9e17-4b1412e78317
+
+	/// Average consumption per activity divided by species average body weight
+	measure 'Weight-Normalized Consumption Index' =
+			VAR TotalConsumption = [Total Consumption (kg)]
+			VAR AvgWeight = [Avg Animal Weight (kg)]
+			VAR TotalActs = [Total Activities]
+			RETURN
+			    DIVIDE(
+			        DIVIDE(TotalConsumption, TotalActs, BLANK()),
+			        AvgWeight,
+			        BLANK()
+			    )
+		formatString: 0.000
+		displayFolder: Rates & Ratios
+		lineageTag: 93fe9099-2891-4ec8-9263-c855dfb0ddf3
+
+	/// Proportion of total prey units from successful hunts
+	measure 'Weighted Success Rate (by Prey)' =
+			VAR SuccessfulPrey =
+			    CALCULATE(
+			        SUM(FoodHunt[Quantity_Prey_Units]),
+			        FoodHunt[Success_Flag] = 1
+			    )
+			VAR TotalPrey = [Total Prey Units]
+			RETURN
+			    DIVIDE(SuccessfulPrey, TotalPrey, BLANK())
+		formatString: 0.0%
+		displayFolder: Rates & Ratios
+		lineageTag: a255618d-e6fc-4a7b-b433-c5c5cdae22d5
+
+	/// Shannon-Wiener diversity index (H') of prey species
+	measure 'Prey Diversity Index (Shannon)' =
+			VAR TotalEvents = [Total Activities]
+			VAR PreyTable =
+			    ADDCOLUMNS(
+			        VALUES(FoodHunt[Prey_Species_Hunted]),
+			        "@Count", CALCULATE(COUNTROWS(FoodHunt)),
+			        "@Proportion", DIVIDE(CALCULATE(COUNTROWS(FoodHunt)), TotalEvents)
+			    )
+			VAR ShannonIndex =
+			    -SUMX(
+			        FILTER(PreyTable, [@Proportion] > 0),
+			        [@Proportion] * LN([@Proportion])
+			    )
+			RETURN
+			    IF(TotalEvents > 0, ShannonIndex, BLANK())
+		formatString: 0.000
+		displayFolder: Ranking & Distribution
+		lineageTag: ce162c9a-b536-4565-93a4-a067b3a516e7
+
+	/// Index comparing current activity count to average monthly activity (100 = average)
+	measure 'Seasonal Activity Index' =
+			VAR CurrentMonthActivities = [Total Activities]
+			VAR OverallMonthlyAvg =
+			    AVERAGEX(
+			        SUMMARIZE(
+			            ALL(FoodHunt),
+			            'Date'[Year],
+			            'Date'[Month_Number]
+			        ),
+			        CALCULATE([Total Activities])
+			    )
+			RETURN
+			    DIVIDE(CurrentMonthActivities, OverallMonthlyAvg, BLANK()) * 100
+		formatString: #,##0.0
+		displayFolder: Time Intelligence
+		lineageTag: f90bbf56-10ad-4021-9e92-fff1318b5c74
+
+	/// Cumulative % of total consumption when species are ranked highest to lowest
+	measure 'Pareto Cumulative Consumption %' =
+			VAR CurrentRank =
+			    RANKX(
+			        ALL(Animals[Species_Name]),
+			        [Total Consumption (kg)],
+			        ,
+			        DESC,
+			        Dense
+			    )
+			VAR CumulativeConsumption =
+			    CALCULATE(
+			        [Total Consumption (kg)],
+			        FILTER(
+			            ALL(Animals[Species_Name]),
+			            RANKX(
+			                ALL(Animals[Species_Name]),
+			                [Total Consumption (kg)],
+			                ,
+			                DESC,
+			                Dense
+			            ) <= CurrentRank
+			        )
+			    )
+			VAR GrandTotal =
+			    CALCULATE(
+			        [Total Consumption (kg)],
+			        ALL(Animals[Species_Name])
+			    )
+			RETURN
+			    IF(
+			        HASONEVALUE(Animals[Species_Name]),
+			        DIVIDE(CumulativeConsumption, GrandTotal, BLANK())
+			    )
+		formatString: 0.0%
+		displayFolder: Ranking & Distribution
+		lineageTag: b919d41b-39b0-4f1a-b886-65f0e62a4ae1
+
+	/// Composite score (0-100) rating each location's efficiency
+	measure 'Habitat Efficiency Score' =
+			VAR LocSuccessRate = [Success Rate %]
+			VAR LocAvgConsumption = [Avg Consumption per Activity]
+			VAR LocActivities = [Total Activities]
+			VAR LocPreyDiversity =
+			    VAR TotalEvents = [Total Activities]
+			    VAR PreyTable =
+			        ADDCOLUMNS(
+			            VALUES(FoodHunt[Prey_Species_Hunted]),
+			            "@Prop", DIVIDE(CALCULATE(COUNTROWS(FoodHunt)), TotalEvents)
+			        )
+			    RETURN
+			        -SUMX(FILTER(PreyTable, [@Prop] > 0), [@Prop] * LN([@Prop]))
+			VAR MaxSuccessRate =
+			    MAXX(ALL(Location), [Success Rate %])
+			VAR MaxConsumption =
+			    MAXX(ALL(Location), [Avg Consumption per Activity])
+			VAR MaxDiversity =
+			    MAXX(
+			        ALL(Location),
+			        VAR TE = CALCULATE([Total Activities])
+			        VAR PT =
+			            ADDCOLUMNS(
+			                CALCULATETABLE(VALUES(FoodHunt[Prey_Species_Hunted])),
+			                "@P", DIVIDE(CALCULATE(COUNTROWS(FoodHunt)), TE)
+			            )
+			        RETURN -SUMX(FILTER(PT, [@P] > 0), [@P] * LN([@P]))
+			    )
+			VAR NormSuccess = DIVIDE(LocSuccessRate, MaxSuccessRate, 0) * 40
+			VAR NormConsumption = DIVIDE(LocAvgConsumption, MaxConsumption, 0) * 35
+			VAR NormDiversity = DIVIDE(LocPreyDiversity, MaxDiversity, 0) * 25
+			RETURN
+			    IF(
+			        LocActivities > 0,
+			        NormSuccess + NormConsumption + NormDiversity
+			    )
+		formatString: #,##0.0
+		displayFolder: Composite Scores
+		lineageTag: e16379f6-82c5-421f-972b-495b40d83e40
+
+	/// Longest streak of consecutive successful hunts for the current species
+	measure 'Max Consecutive Hunt Streak' =
+			IF(
+			    HASONEVALUE(Animals[Species_Name]),
+			    VAR _SuccessDates =
+			        CALCULATETABLE(
+			            DISTINCT(FoodHunt[Date_Key]),
+			            FoodHunt[Success_Flag] = 1
+			        )
+			    VAR _FailDates =
+			        CALCULATETABLE(
+			            DISTINCT(FoodHunt[Date_Key]),
+			            FoodHunt[Success_Flag] = 0
+			        )
+			    VAR _MinDate = CALCULATE(MIN(FoodHunt[Date_Key])) - 1
+			    VAR _StreakEnds =
+			        ADDCOLUMNS(
+			            _SuccessDates,
+			            "@PrevFail",
+			            VAR _CurrDate = [Date_Key]
+			            VAR _LastFail = MAXX(FILTER(_FailDates, [Date_Key] < _CurrDate), [Date_Key])
+			            RETURN IF(ISBLANK(_LastFail), _MinDate, _LastFail)
+			        )
+			    VAR _Streaks =
+			        ADDCOLUMNS(
+			            _StreakEnds,
+			            "@Length",
+			            VAR _Start = [@PrevFail]
+			            VAR _End = [Date_Key]
+			            RETURN
+			                COUNTROWS(FILTER(_SuccessDates, [Date_Key] > _Start && [Date_Key] <= _End))
+			        )
+			    RETURN
+			        MAXX(_Streaks, [@Length])
+			)
+		formatString: #,##0
+		displayFolder: Composite Scores
+		lineageTag: ba107d27-0c45-4f71-9bc6-3d4b91a96ad5
+
+	/// Average number of prey units captured per activity (Total Prey Units / Total Activities)
+	measure 'Avg Prey Units per Hunt' = DIVIDE([Total Prey Units], [Total Activities], 0)
+		formatString: #,##0.00
+		displayFolder: Rates & Ratios
+		lineageTag: 07590b75-84bc-4e5c-ab4a-1647f8a8b284
+
+	/// Count of activities where the hunt was unsuccessful (Success_Flag = 0)
+	measure 'Failed Hunts' = CALCULATE(COUNTROWS(FoodHunt), FoodHunt[Success_Flag] = 0)
+		formatString: #,##0
+		displayFolder: Core Totals
+		lineageTag: 227bf108-c094-4611-a2ca-ce6acb373430
+
+	/// Year-over-year growth in total activities, expressed as a percentage
+	measure 'YoY Activity Growth %' =
+			VAR CurrentYearValue = [Total Activities]
+			VAR PriorYearValue = CALCULATE([Total Activities], SAMEPERIODLASTYEAR('Date'[FullDate]))
+			RETURN DIVIDE(CurrentYearValue - PriorYearValue, PriorYearValue, 0)
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 34574d07-03d5-4565-8701-d43363ae5ff5
+
+	/// Returns the name of the most frequently hunted prey species in the current filter context
+	measure 'Top Prey Species' =
+			VAR _TopPrey =
+			    TOPN(
+			        1,
+			        ADDCOLUMNS(
+			            VALUES(FoodHunt[Prey_Species_Hunted]),
+			            "@Count", CALCULATE(COUNTROWS(FoodHunt))
+			        ),
+			        [@Count],
+			        DESC
+			    )
+			RETURN
+			    MAXX(_TopPrey, FoodHunt[Prey_Species_Hunted])
+		displayFolder: Utility
+		lineageTag: 62a2b259-36f0-424a-8e54-b0abbf7355cd
+
+	/// Dense rank of the current location by total consumption (kg), where rank 1 = highest consuming location
+	measure 'Location Consumption Rank' =
+			IF(
+			    HASONEVALUE(Location[Location_Name]),
+			    RANKX(
+			        ALL(Location[Location_Name]),
+			        [Total Consumption (kg)],
+			        ,
+			        DESC,
+			        Dense
+			    )
+			)
+		formatString: 0
+		displayFolder: Ranking & Distribution
+		lineageTag: c33eaae6-6beb-41ee-85ef-cd3e45caef88
+
+	/// Berger-Parker dominance index: proportion of hunts targeting the most common prey species. Higher values indicate greater dietary specialization and vulnerability.
+	measure 'Prey Specialization Index' =
+			VAR TotalHunts = [Total Activities]
+			VAR MaxPreyCount =
+			    MAXX(
+			        ADDCOLUMNS(
+			            VALUES(FoodHunt[Prey_Species_Hunted]),
+			            "@Count", CALCULATE(COUNTROWS(FoodHunt))
+			        ),
+			        [@Count]
+			    )
+			RETURN
+			    IF(TotalHunts > 0, DIVIDE(MaxPreyCount, TotalHunts, BLANK()))
+		formatString: 0.0%
+		displayFolder: Ranking & Distribution
+		lineageTag: c1f5df05-b8bb-490f-b0d3-81a185e3a3d6
+
+	column Measures
+		dataType: string
+		isHidden
+		lineageTag: b0cb7d38-6e6c-4367-9b40-ff41b582bd40
+		summarizeBy: none
+		sourceColumn: Measures
+
+		annotation SummarizationSetBy = Automatic
+
+	partition __MeasureTable = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Measures = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Measures", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

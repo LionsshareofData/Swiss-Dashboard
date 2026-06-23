@@ -1,0 +1,25 @@
+/// Swiss Wildlife Dashboard semantic model - tracks wildlife activity, feeding, and foraging across Swiss locations
+model Model
+	culture: de-DE
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: de-DE
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["foodhunt","date","activity","animals","__MeasureTable","location"]
+
+annotation PBI_ProTooling = ["DevMode","MCP-PBIModeling","TMDLView_Desktop"]
+
+ref table FoodHunt
+ref table Date
+ref table Activity
+ref table Animals
+ref table __MeasureTable
+ref table Location
+
+ref cultureInfo de-DE
+
